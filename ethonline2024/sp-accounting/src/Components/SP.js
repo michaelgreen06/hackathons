@@ -2,129 +2,124 @@ import React, { useState } from "react";
 import { SignProtocolClient, SpMode, EvmChains } from "@ethsign/sp-sdk";
 
 const SignMe = () => {
-  const [member, setMember] = useState("");
-  const [amount, setAmount] = useState("");
-  const [transactiontype, setTransactiontype] = useState("");
-  const [date, setDate] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const handleMember = (e) => {
-    setMember(e.target.value.toLowerCase());
+  const [formData, setFormData] = useState({
+    member: "",
+    amount: "",
+    transactiontype: "",
+    date: "",
+    category: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
-  const handleAmount = (e) => {
-    setAmount(e.target.value.toLowerCase());
-  };
-  const handleTransactiontype = (e) => {
-    setTransactiontype(e.target.value.toLowerCase());
-  };
-  const handleDate = (e) => {
-    setDate(e.target.value.toLowerCase());
-  };
-  const handleCategory = (e) => {
-    setCategory(e.target.value.toLowerCase());
-  };
-  const handleDescription = (e) => {
-    setDescription(e.target.value.toLowerCase());
-  };
-  const createAttestation = async () => {
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const client = new SignProtocolClient(SpMode.OnChain, {
         chain: EvmChains.optimismSepolia,
       });
 
       const createAttestationRes = await client.createAttestation({
-        schemaId: "0x9",
-        data: {
-          member: { member },
-          amount: { amount },
-          "transaction-type": { transactiontype },
-          date: { date },
-          category: { category },
-          description: { description },
-        },
+        schemaId: "0xe",
+        data: formData,
         indexingValue: "1",
       });
 
-      console.log(createAttestationRes);
+      console.log("Attestation created:", createAttestationRes);
     } catch (error) {
       console.error("Error creating attestation:", error);
     }
   };
 
   return (
-    <div>
-      <form>
-        <div>
-          <label htmlFor="member">Member (address)</label>
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>
+          Member:
           <input
             type="text"
-            id="member"
+            name="member"
+            value={formData.member}
+            onChange={handleChange}
             placeholder="0x..."
-            onChange={handleMember}
           />
-        </div>
-        <div>
-          <label htmlFor="amount">Amount ($)</label>
+        </label>
+      </div>
+      <div>
+        <label>
+          Amount:
           <input
             type="text"
-            id="amount"
+            name="amount"
+            value={formData.amount}
+            onChange={handleChange}
             placeholder="420"
-            onChange={handleAmount}
           />
-        </div>
-        <div>
-          <label htmlFor="transactionType">Credit/Debit</label>
+        </label>
+      </div>
+      <div>
+        j
+        <label>
+          Transaction Type:
           <select
-            id="transactionType"
-            onChange={handleTransactiontype}
+            name="transactiontype"
+            value={formData.transactiontype}
+            onChange={handleChange}
           >
-            <option value="1">I owe</option>
-            <option value="2">I am owed</option>
+            <option value="">Select an option</option>
+            <option value="0">I owe</option>{" "}
+            {/*^^^this assigns a negative value to the member's balance*/}
+            <option value="1">I am owed</option>
           </select>
-        </div>
-        <div>
-          <label htmlFor="date">Date</label>
+        </label>
+      </div>
+      <div>
+        <label>
+          Date:
           <input
             type="date"
-            id="date"
-            onChange={handleDate}
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
           />
-        </div>
-        <div>
-          <label htmlFor="category">Category</label>
+        </label>
+      </div>
+      <div>
+        <label>
+          Category:
           <select
-            id="category"
-            onChange={handleCategory}
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
           >
-            <option value="1">Supplies</option>
-            <option value="2">Office Equipment</option>
-            <option value="3">Add a new category</option>
+            <option value="">Select a category</option>
+            <option value="Supplies">Supplies</option>
+            <option value="Office Equipment">Office Equipment</option>
+            <option value="Add a new category">Add a new category</option>
           </select>
-        </div>
-        <div>
-          <label htmlFor="description">Description</label>
+        </label>
+      </div>
+      <div>
+        <label>
+          Description:
           <input
             type="text"
-            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
             placeholder="Provide a brief summary of what you are submitting a request for"
-            onChange={handleDescription}
           />
-        </div>
-        <div>
-          <label htmlFor="media">Upload Media (receipt, invoice etc)</label>
-          <input
-            type="file"
-            id="media"
-          />
-        </div>
-        <button
-          type="submit"
-          onClick={createAttestation}
-        >
-          Submit
-        </button>
-      </form>
-    </div>
+        </label>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 
