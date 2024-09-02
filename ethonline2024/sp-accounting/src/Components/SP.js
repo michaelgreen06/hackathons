@@ -65,7 +65,6 @@ const SignMe = () => {
         </label>
       </div>
       <div>
-        j
         <label>
           Transaction Type:
           <select
