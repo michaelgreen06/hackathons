@@ -55,7 +55,7 @@ async function logDecodedAttestations() {
   }
 
   const attestations = queryResult.attestations;
-
+  const processedData: any[][] = [];
   for (const att of attestations) {
     if (!att.data) continue;
 
@@ -65,12 +65,33 @@ async function logDecodedAttestations() {
         att.data
       );
 
-      console.log("Decoded Data:", decodedData);
+      // Add the decoded data to the processedData array
+      processedData.push(decodedData);
+      console.log(processedData);
     } catch (error) {
       console.error("Error decoding attestation data:", error);
     }
   }
 }
-
 // Call the function to log the decoded attestations
 logDecodedAttestations();
+
+function calculateMemberTotals(processedData) {
+  return processedData.reduce((totals, [member, amount, sign]) => {
+    // Initialize the member's total if it doesn't exist
+    if (!totals.hasOwnProperty(member)) {
+      totals[member] = 0;
+    }
+
+    // Adjust the amount based on the sign
+    const adjustedAmount = sign === 1 ? amount : -amount;
+
+    // Update the member's total
+    totals[member] += adjustedAmount;
+
+    return totals;
+  }, {});
+}
+
+const memberTotals = calculateMemberTotals(processedData);
+console.log(memberTotals); // Output: { '0': 0, '1': 200 }
