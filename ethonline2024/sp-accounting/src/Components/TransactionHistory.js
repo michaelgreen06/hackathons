@@ -1,7 +1,7 @@
 const { ethers } = require("ethers");
 
 // Replace with your Etherscan API key
-const ETHERSCAN_API_KEY = "S58AX7RGE8H35RT8QXD4RQ2A427RQF7B1M";
+const ETHERSCAN_API_KEY = "your api key";
 
 // Replace with the address you want to query
 const address = "0x28c0579BAC08317300fe591d42Ed66fEfc7Efcd2";
