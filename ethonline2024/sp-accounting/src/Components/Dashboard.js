@@ -28,23 +28,24 @@ const Dashboard = () => {
     try {
       const transactions = await getERC20Transactions();
       const totals = {};
-
       transactions.forEach((transaction) => {
         const value = new BigNumber(transaction.value);
         const divisor = new BigNumber(10).pow(transaction.tokenDecimal);
         const adjustedValue = value.dividedBy(divisor);
+        const transactionTo = transaction.to.toLowerCase();
+        const transactionFrom = transaction.from.toLowerCase();
 
-        if (transaction.to.toLowerCase() === address) {
-          const member = transaction.from.toLowerCase();
-          totals[member] = (totals[member] || new BigNumber(0)).plus(adjustedValue);
+        if (transactionTo === address) {
+          totals[transactionFrom] = (totals[transactionFrom] || new BigNumber(0)).plus(
+            adjustedValue
+          );
         }
-
-        if (transaction.from.toLowerCase() === address) {
-          const member = transaction.to.toLowerCase();
-          totals[member] = (totals[member] || new BigNumber(0)).minus(adjustedValue);
+        if (transactionFrom === address) {
+          totals[transactionTo] = (totals[transactionTo] || new BigNumber(0)).minus(
+            adjustedValue
+          );
         }
       });
-
       return totals;
     } catch (error) {
       console.error("Error fetching ERC20 transactions:", error);
@@ -120,14 +121,13 @@ const Dashboard = () => {
       if (!att.data) continue;
       try {
         const decodedData = abiCoder.decode(types, att.data);
-        const member = decodedData[0];
+        const member = decodedData[0].toLowerCase(); // Convert to lowercase
         const amount = new BigNumber(decodedData[1]);
         const isPositive = decodedData[2] === "1";
 
         if (!(member in totals)) {
           totals[member] = new BigNumber(0);
         }
-
         totals[member] = isPositive
           ? totals[member].plus(amount)
           : totals[member].minus(amount);
@@ -135,7 +135,6 @@ const Dashboard = () => {
         console.error("Error decoding attestation data:", error);
       }
     }
-
     return totals;
   };
 
@@ -216,8 +215,8 @@ const Dashboard = () => {
               marginRight: "10px",
             }}
           ></div>
-          <div style={{ flex: 1 }}>{member}</div>
-          <div style={{ fontWeight: "bold" }}>{balance}</div>
+          <div style={{ flex: 1 }}>{member}: </div>
+          <div style={{ fontWeight: "bold" }}>${balance}</div>
         </div>
       ))}
     </div>
