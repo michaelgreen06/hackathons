@@ -1,60 +1,124 @@
-import React from "react";
+import React, { useState } from "react";
+import { SignProtocolClient, SpMode, EvmChains } from "@ethsign/sp-sdk";
 
 const Form = () => {
+  const [formData, setFormData] = useState({
+    member: "",
+    amount: "",
+    transactiontype: "",
+    date: "",
+    category: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const client = new SignProtocolClient(SpMode.OnChain, {
+        chain: EvmChains.optimismSepolia,
+      });
+
+      const createAttestationRes = await client.createAttestation({
+        schemaId: "0x18",
+        data: formData,
+        indexingValue: "1",
+      });
+
+      console.log("Attestation created:", createAttestationRes);
+    } catch (error) {
+      console.error("Error creating attestation:", error);
+    }
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="member">Member (address)</label>
-        <input
-          type="text"
-          id="member"
-          placeholder="0x..."
-        />
+        <label>
+          Member:
+          <input
+            type="text"
+            name="member"
+            autoComplete="off"
+            value={formData.member}
+            onChange={handleChange}
+            placeholder="0x..."
+          />
+        </label>
       </div>
       <div>
-        <label htmlFor="amount">Amount ($)</label>
-        <input
-          type="text"
-          id="amount"
-          placeholder="420"
-        />
+        <label>
+          Amount:
+          <input
+            type="text"
+            name="amount"
+            autoComplete="off"
+            value={formData.amount}
+            onChange={handleChange}
+            placeholder="420"
+          />
+        </label>
       </div>
       <div>
-        <label htmlFor="transactionType">Credit/Debit</label>
-        <select id="transactionType">
-          <option value="1">I owe</option>
-          <option value="2">I am owed</option>
-        </select>
+        <label>
+          Transaction Type:
+          <select
+            name="transactiontype"
+            value={formData.transactiontype}
+            onChange={handleChange}
+          >
+            <option value="">Select an option</option>
+            <option value="0">I owe</option>{" "}
+            {/*^^^this assigns a negative value to the member's balance*/}
+            <option value="1">I paid</option>
+          </select>
+        </label>
       </div>
       <div>
-        <label htmlFor="date">Date</label>
-        <input
-          type="date"
-          id="date"
-        />
+        <label>
+          Date:
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+          />
+        </label>
       </div>
       <div>
-        <label htmlFor="category">Category</label>
-        <select id="category">
-          <option value="1">Supplies</option>
-          <option value="2">Office Equipment</option>
-          <option value="3">Add a new category</option>
-        </select>
+        <label>
+          Category:
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+          >
+            <option value="">Select a category</option>
+            <option value="Supplies">Supplies</option>
+            <option value="Labor Contribution">Labor Contribution</option>
+            <option value="Rent">Rent</option>
+          </select>
+        </label>
       </div>
       <div>
-        <label htmlFor="description">Description</label>
-        <input
-          type="text"
-          id="description"
-          placeholder="Provide a brief summary of what you are submitting a request for"
-        />
-      </div>
-      <div>
-        <label htmlFor="media">Upload Media (receipt, invoice etc)</label>
-        <input
-          type="file"
-          id="media"
-        />
+        <label>
+          Description:
+          <input
+            type="text"
+            name="description"
+            autoComplete="off"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Provide a brief summary of what you are submitting a request for"
+          />
+        </label>
       </div>
       <button type="submit">Submit</button>
     </form>

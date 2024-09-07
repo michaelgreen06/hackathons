@@ -1,12 +1,12 @@
 import "./App.css";
-import BalanceDisplay from "./Components/gptTotals";
-import SignMe from "./Components/SP";
+import Dashboard from "./Components/Dashboard";
+import Form from "./Components/Form";
 
 function App() {
   return (
     <div>
-      <SignMe />
-      <BalanceDisplay />
+      <Form />
+      <Dashboard />
     </div>
   );
 }

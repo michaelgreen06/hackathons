@@ -3,12 +3,12 @@ import axios from "axios";
 import BigNumber from "bignumber.js";
 import { AbiCoder } from "ethers";
 
-const BalanceDisplay = () => {
+const Dashboard = () => {
   const [balances, setBalances] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const address = "0x28c0579BAC08317300fe591d42Ed66fEfc7Efcd2".toLowerCase();
+  const address = "0x6781d3E0FE4B93cD5e848C9ffFB55D7c90aE74CF".toLowerCase();
   const etherscanApiKey = "S58AX7RGE8H35RT8QXD4RQ2A427RQF7B1M";
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const BalanceDisplay = () => {
       method: "GET",
       params: {
         mode: "onchain",
-        schemaId: "onchain_evm_11155420_0xe",
+        schemaId: "onchain_evm_11155420_0x18",
       },
     });
 
@@ -180,6 +180,13 @@ const BalanceDisplay = () => {
   return (
     <div>
       <h2>Member Balances</h2>
+      <a
+        href="https://optimistic.etherscan.io/address/0x6781d3e0fe4b93cd5e848c9fffb55d7c90ae74cf"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h3>Multisig Address:{address}</h3>
+      </a>
       {Object.entries(balances).map(([member, balance]) => (
         <div
           key={member}
@@ -209,4 +216,4 @@ const BalanceDisplay = () => {
   );
 };
 
-export default BalanceDisplay;
+export default Dashboard;
