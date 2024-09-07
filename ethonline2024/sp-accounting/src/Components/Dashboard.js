@@ -178,8 +178,16 @@ const Dashboard = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      <h2>Member Balances</h2>
+    <div
+      style={{
+        maxWidth: "700px",
+        margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <h2 style={{ marginBottom: "0px" }}>Member Balances</h2>
       <a
         href="https://optimistic.etherscan.io/address/0x6781d3e0fe4b93cd5e848c9fffb55d7c90ae74cf"
         target="_blank"

@@ -39,8 +39,12 @@ const Form = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      style={{ textAlign: "center", marginBottom: "20px" }}
+      onSubmit={handleSubmit}
+    >
       <div>
+        <h2 style={{ marginBottom: "0px" }}>Attestation Submission</h2>
         <label>
           Member:
           <input
