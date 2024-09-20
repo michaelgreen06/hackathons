@@ -8,15 +8,17 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const address = "0x6781d3E0FE4B93cD5e848C9ffFB55D7c90aE74CF".toLowerCase();
-  const etherscanApiKey = "S58AX7RGE8H35RT8QXD4RQ2A427RQF7B1M";
+  const address = "0xA594263e0449A28eAEf5BA6420E81cC1996b7782".toLowerCase();
+  const schemaId = "onchain_evm_10_0x137";
+  const etherscanApiKey = "S58AX7RGE8H35RT8QXtrD4RQ2A427RQF7B1M";
 
   useEffect(() => {
     calculateCombinedTotals();
   }, []);
 
   const getERC20Transactions = async () => {
-    const url = `https://api-sepolia-optimism.etherscan.io/api?module=account&action=tokentx&address=${address}&page=1&offset=100&startblock=0&endblock=99999999&sort=asc&apikey=${etherscanApiKey}`;
+    const url = `https://api-optimistic.etherscan.io/api?module=account&action=tokentx&address=${address}&page=1&offset=100&startblock=0&endblock=99999999&sort=asc`;
+    //9/20/24 - removed api key from this request because none of my api keys will work on OP for some reason
     const res = await axios.get(url);
     if (res.status !== 200) {
       throw new Error(JSON.stringify(res));
@@ -54,7 +56,7 @@ const Dashboard = () => {
   };
 
   const makeAttestationRequest = async (endpoint, options) => {
-    const url = `https://testnet-rpc.sign.global/api/${endpoint}`;
+    const url = `https://mainnet-rpc.sign.global/api/${endpoint}`;
     const res = await axios.request({
       url,
       headers: {
@@ -73,7 +75,7 @@ const Dashboard = () => {
       method: "GET",
       params: {
         mode: "onchain",
-        schemaId: "onchain_evm_11155420_0x18",
+        schemaId: schemaId,
       },
     });
 
@@ -100,9 +102,9 @@ const Dashboard = () => {
   const calculateAttestationTotals = async () => {
     const queryResult = await queryAttestations();
     const types = [
-      "string", // member
-      "string", // amount
-      "string", // transactiontype
+      "address", // member
+      "uint256", // amount
+      "bool", // transactiontype
       "string", // date
       "string", // category
       "string", // description
@@ -121,9 +123,10 @@ const Dashboard = () => {
       if (!att.data) continue;
       try {
         const decodedData = abiCoder.decode(types, att.data);
-        const member = decodedData[0].toLowerCase(); // Convert to lowercase
-        const amount = new BigNumber(decodedData[1]);
-        const isPositive = decodedData[2] === "1";
+        console.log(decodedData);
+        const member = decodedData[0].toLowerCase();
+        const amount = new BigNumber(decodedData[1].toString());
+        const isPositive = decodedData[2];
 
         if (!(member in totals)) {
           totals[member] = new BigNumber(0);
@@ -188,7 +191,7 @@ const Dashboard = () => {
     >
       <h2 style={{ marginBottom: "0px" }}>Member Balances</h2>
       <a
-        href="https://optimistic.etherscan.io/address/0x6781d3e0fe4b93cd5e848c9fffb55d7c90ae74cf"
+        href={`https://optimistic.etherscan.io/address/${address}`}
         target="_blank"
         rel="noopener noreferrer"
       >

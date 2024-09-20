@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { SignProtocolClient, SpMode, EvmChains } from "@ethsign/sp-sdk";
+const schemaId = "0x137";
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -23,15 +24,16 @@ const Form = () => {
     e.preventDefault();
     try {
       const client = new SignProtocolClient(SpMode.OnChain, {
-        chain: EvmChains.optimismSepolia,
+        chain: EvmChains.optimism,
       });
+
+      const transactionTypeBoolean = formData.transactiontype === "true";
 
       const createAttestationRes = await client.createAttestation({
-        schemaId: "0x18",
-        data: formData,
+        schemaId: schemaId,
+        data: { ...formData, transactiontype: transactionTypeBoolean },
         indexingValue: "1",
       });
-
       console.log("Attestation created:", createAttestationRes);
     } catch (error) {
       console.error("Error creating attestation:", error);
@@ -79,9 +81,9 @@ const Form = () => {
             onChange={handleChange}
           >
             <option value="">Select an option</option>
-            <option value="0">I owe</option>{" "}
+            <option value={false}>I owe</option>{" "}
             {/*^^^this assigns a negative value to the member's balance*/}
-            <option value="1">I paid</option>
+            <option value={true}>I paid</option>
           </select>
         </label>
       </div>
