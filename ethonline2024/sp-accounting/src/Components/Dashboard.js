@@ -10,7 +10,7 @@ const Dashboard = () => {
 
   const address = "0xA594263e0449A28eAEf5BA6420E81cC1996b7782".toLowerCase();
   const schemaId = "onchain_evm_10_0x137";
-  const etherscanApiKey = "S58AX7RGE8H35RT8QXtrD4RQ2A427RQF7B1M";
+  const etherscanApiKey = "A61CG1U6WQCS93NBSTEJ8QAS6AFG96QXHZ";
 
   useEffect(() => {
     calculateCombinedTotals();
@@ -123,7 +123,6 @@ const Dashboard = () => {
       if (!att.data) continue;
       try {
         const decodedData = abiCoder.decode(types, att.data);
-        console.log(decodedData);
         const member = decodedData[0].toLowerCase();
         const amount = new BigNumber(decodedData[1].toString());
         const isPositive = decodedData[2];
